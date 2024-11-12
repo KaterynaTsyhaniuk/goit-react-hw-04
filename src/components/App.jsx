@@ -3,6 +3,7 @@ import "./App.css";
 import SearchBar from "./SearchBar/SearchBar";
 import { useEffect, useState } from "react";
 import { getPhotos } from "../apiService/photos";
+import ImageGallery from "./ImageGallery/ImageGallery";
 
 function App() {
   const [query, setQuery] = useState("");
@@ -21,12 +22,13 @@ function App() {
     const fetchImages = async () => {
       setIsLoading(true);
       try {
-        const { results } = await getPhotos(query, page);
-        console.log(results);
-        if (!results.lengs) {
+        const { results, total_pages } = await getPhotos(query, page);
+
+        if (!results.length) {
           return setIsEmpty(true);
         }
         setImages((prevImages) => [...prevImages, ...results]);
+        setIsVisible(total_pages > 1 && page < total_pages);
       } catch (error) {
       } finally {
         setIsLoading(false);
@@ -44,6 +46,11 @@ function App() {
     <>
       <Toaster position="top-right" reverseOrder={false} />
       <SearchBar onSubmit={handleSubmit} />
+      {images.length > 0 && <ImageGallery images={images} />}
+      {/* {!images.length && !isEmpty && <p>Let's begin search</p>}
+      {isLoading && <Loader />}
+      {error && <Text>Something went wrong - {error}</Text>}
+      {isEmpty && <Text>Sorry.There are no images...</Text>} */}
     </>
   );
 }
