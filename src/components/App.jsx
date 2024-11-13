@@ -4,6 +4,9 @@ import SearchBar from "./SearchBar/SearchBar";
 import { useEffect, useState } from "react";
 import { getPhotos } from "../apiService/photos";
 import ImageGallery from "./ImageGallery/ImageGallery";
+import Loader from "./Loader/Loader";
+import LoadMoreBtn from "./LoadMoreBtn/LoadMoreBtn";
+import ImageModal from "./ImageModal/ImageModal";
 
 function App() {
   const [query, setQuery] = useState("");
@@ -13,6 +16,22 @@ function App() {
   const [error, setError] = useState(null);
   const [isEmpty, setIsEmpty] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+
+  const [modalIsOpen, setIsOpen] = useState(false);
+  const [modalAlt, setModalAlt] = useState("");
+  const [modalSrc, setModalSrs] = useState("");
+
+  function openModal(src, alt) {
+    setIsOpen(true);
+    setModalAlt(alt);
+    setModalSrs(src);
+  }
+
+  function closeModal() {
+    setIsOpen(false);
+    setModalAlt("");
+    setModalSrs("");
+  }
 
   useEffect(() => {
     if (!query) {
@@ -30,6 +49,7 @@ function App() {
         setImages((prevImages) => [...prevImages, ...results]);
         setIsVisible(total_pages > 1 && page < total_pages);
       } catch (error) {
+        setError(error);
       } finally {
         setIsLoading(false);
       }
@@ -40,17 +60,38 @@ function App() {
 
   const handleSubmit = (value) => {
     setQuery(value);
+    setImages([]);
+    setPage(1);
+    setError(null);
+    setIsVisible(false);
+    setIsVisible(false);
   };
+
+  const handleLoadMore = () => setPage((prevPage) => prevPage + 1);
 
   return (
     <>
       <Toaster position="top-right" reverseOrder={false} />
       <SearchBar onSubmit={handleSubmit} />
-      {images.length > 0 && <ImageGallery images={images} />}
-      {/* {!images.length && !isEmpty && <p>Let's begin search</p>}
+      {images.length > 0 && (
+        <ImageGallery openModal={openModal} images={images} />
+      )}
+      {isVisible && !isLoading && !isEmpty && (
+        <LoadMoreBtn onClick={handleLoadMore} disabled={isLoading}>
+          {" "}
+          {isLoading ? "Loading" : "Load more"}
+        </LoadMoreBtn>
+      )}
+      {!images.length && !isEmpty && <p>Let&apos;s begin search</p>}
       {isLoading && <Loader />}
-      {error && <Text>Something went wrong - {error}</Text>}
-      {isEmpty && <Text>Sorry.There are no images...</Text>} */}
+      {error && <p>Something went wrong - {error}</p>}
+      {isEmpty && <p>Sorry.There are no images...</p>}
+      <ImageModal
+        modalIsOpen={modalIsOpen}
+        closeModal={closeModal}
+        src={modalSrc}
+        alt={modalAlt}
+      />
     </>
   );
 }
