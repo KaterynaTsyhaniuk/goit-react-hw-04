@@ -1,4 +1,5 @@
 import Modal from "react-modal";
+
 const customStyles = {
   content: {
     top: "50%",
@@ -26,7 +27,6 @@ function ImageModal({ modalIsOpen, closeModal, alt, src }) {
         contentLabel="Example Modal"
       >
         <img src={src} alt={alt} />
-        <button onClick={closeModal}>Close</button>
       </Modal>
     </div>
   );

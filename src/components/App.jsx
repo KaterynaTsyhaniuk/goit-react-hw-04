@@ -7,6 +7,7 @@ import ImageGallery from "./ImageGallery/ImageGallery";
 import Loader from "./Loader/Loader";
 import LoadMoreBtn from "./LoadMoreBtn/LoadMoreBtn";
 import ImageModal from "./ImageModal/ImageModal";
+import ErrorMessage from "./ErrorMessage/ErrorMessage";
 
 function App() {
   const [query, setQuery] = useState("");
@@ -49,7 +50,7 @@ function App() {
         setImages((prevImages) => [...prevImages, ...results]);
         setIsVisible(total_pages > 1 && page < total_pages);
       } catch (error) {
-        setError(error);
+        setError(error.message);
       } finally {
         setIsLoading(false);
       }
@@ -65,6 +66,7 @@ function App() {
     setError(null);
     setIsVisible(false);
     setIsVisible(false);
+    setIsEmpty(false);
   };
 
   const handleLoadMore = () => setPage((prevPage) => prevPage + 1);
@@ -78,14 +80,14 @@ function App() {
       )}
       {isVisible && !isLoading && !isEmpty && (
         <LoadMoreBtn onClick={handleLoadMore} disabled={isLoading}>
-          {" "}
           {isLoading ? "Loading" : "Load more"}
         </LoadMoreBtn>
       )}
       {!images.length && !isEmpty && <p>Let&apos;s begin search</p>}
       {isLoading && <Loader />}
-      {error && <p>Something went wrong - {error}</p>}
+      {error && <ErrorMessage message={error} />}
       {isEmpty && <p>Sorry.There are no images...</p>}
+
       <ImageModal
         modalIsOpen={modalIsOpen}
         closeModal={closeModal}

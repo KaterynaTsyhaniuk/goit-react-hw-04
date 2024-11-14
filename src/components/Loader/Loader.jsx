@@ -1,16 +1,13 @@
-import { ProgressBar } from "react-loader-spinner";
+import { InfinitySpin } from "react-loader-spinner";
 
 function Loader() {
   return (
     <div>
-      <ProgressBar
+      <InfinitySpin
         visible={true}
-        height="80"
-        width="80"
+        width="150"
         color="#4fa94d"
-        ariaLabel="progress-bar-loading"
-        wrapperStyle={{}}
-        wrapperClass=""
+        ariaLabel="infinity-spin-loading"
       />
     </div>
   );
